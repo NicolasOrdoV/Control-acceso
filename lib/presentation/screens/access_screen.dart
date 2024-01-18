@@ -1,54 +1,61 @@
-import 'package:control_acceso_emlaze/domain/datasources/autenticare_datasource.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
-class HomeScreen extends StatefulWidget {
-  static const name = "home-screen";
-  final int pageIndex;
-  const HomeScreen({super.key, required this.pageIndex});
+class AccessScreen extends StatefulWidget {
+
+  static const name = 'access-screen';
+  const AccessScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<AccessScreen> createState() => _AccessScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  String _scanBarcode = 'Unknown';
-  
+class _AccessScreenState extends State<AccessScreen> {
+
   @override
   void initState() {
     super.initState();
-  }
-
-  Future<void> scanQR() async {
-    String barcodeScanRes;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.QR);
-      // print("Aqui esta la respuesta " + barcodeScanRes);
-      Future<dynamic> route = AutenticateDatosurce(code: barcodeScanRes).autenticate();
-
-      route.then((valor) {
-        String resultado = valor.toString();
-        context.push(resultado);
-      });
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
-    }
-
-    if (!mounted) return;
-
-    setState(() {
-      _scanBarcode = barcodeScanRes;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('¡Bienvenido!'),
+            content: const Text('Gracias por usar nuestra aplicación.'),
+            actions: [
+              // Botón de cerrar
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cerrar'),
+              ),
+            ],
+          );
+        },
+      );
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Control de acceso EMLAZE ERP'),
+        backgroundColor: const Color.fromARGB(255, 51, 122, 183),
+        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+        actions: [
+          IconButton(
+            onPressed: () {
+              context.go('/home/0');
+            }, 
+            icon: const Icon(Icons.exit_to_app_rounded),
+            color: Colors.white,
+          )
+        ],
+      ),
       body: Container(
         decoration: const BoxDecoration(
             image: DecorationImage(
@@ -63,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
                 Container(
                   width: 350,
-                  height: 260,
+                  height: 305,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     color: Colors.white
@@ -76,16 +83,35 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       const SizedBox(height: 20,),
-                      const Text('Control de acceso', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
-                      const Text('EMLAZE ERP', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),),
-                      const SizedBox(height: 15,),
+                      const Text('Indique el tipo de registro', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),),
+                      const SizedBox(height: 8,),
                       ElevatedButton(
-                        onPressed: () => scanQR(),
+                        onPressed: () {},
                         style: TextButton.styleFrom(
                           backgroundColor: const Color.fromARGB(255, 51, 122, 183),
-                          padding: const EdgeInsets.symmetric(horizontal: 30)
+                          padding: const EdgeInsets.only(right: 110, left: 110)
                         ), 
-                        child: const Text('Escanear codigo QR', style: TextStyle(color: Colors.white),),
+                        child: const Text('Entrada', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),),
+                        
+                      ),
+                      const SizedBox(height: 3,),
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: TextButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 51, 122, 183),
+                          padding: const EdgeInsets.only(right: 102, left: 102)
+                        ), 
+                        child: const Text('Descanso', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),),
+                        
+                      ),
+                      const SizedBox(height: 3,),
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: TextButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 51, 122, 183),
+                          padding: const EdgeInsets.only(right: 115, left: 115)
+                        ), 
+                        child: const Text('Salida', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),),
                         
                       ),
                     ],
@@ -123,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           )
         ),
-      )
+      ),
     );
   }
 }

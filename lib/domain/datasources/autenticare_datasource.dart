@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:control_acceso_emlaze/domain/models/autenticate.dart';
 import 'package:dio/dio.dart';
 import 'package:isar/isar.dart';
@@ -23,7 +25,7 @@ class AutenticateDatosurce {
     return Future.value(Isar.getInstance());
   }
 
-  Future<void> autenticate() async {
+  Future autenticate() async {
     db = openDB();
     final dio = Dio(BaseOptions(
       baseUrl: 'https://www.emlaze.net/includes/api/slimAPI/public',
@@ -40,6 +42,7 @@ class AutenticateDatosurce {
         data: response.data['data']
       );
       isar.writeTxnSync(() => isar.autenticates.putSync(dataRes));
+      return '/access-screen';
     } else {
       
     }
