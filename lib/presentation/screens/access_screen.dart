@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:control_acceso_emlaze/domain/datasources/autenticare_datasource.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
@@ -13,31 +16,48 @@ class AccessScreen extends StatefulWidget {
 
 class _AccessScreenState extends State<AccessScreen> {
 
+  late Timer _timer;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('¡Bienvenido!'),
-            content: const Text('Gracias por usar nuestra aplicación.'),
-            actions: [
-              // Botón de cerrar
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Cerrar'),
-              ),
-            ],
+          return const AlertDialog(
+            content:  SizedBox(
+              width: 30,
+              height: 210,
+              child: Column(
+                  children: [
+                    Icon(Icons.check_circle, color: Colors.greenAccent, size: 80),
+                    SizedBox(height: 20,),
+                    Text('¡Bienvenido!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                    SizedBox(height: 10,),
+                    Text('Escanee el código de barras de la cédula del personal', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                    SizedBox(height: 10,),
+                  ],
+                ),
+            ),
+
+            
           );
         },
       );
     });
+
+    _timer = Timer(const Duration(seconds: 2) , () {
+      Navigator.of(context).pop();
+    });
   }
 
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +69,7 @@ class _AccessScreenState extends State<AccessScreen> {
         actions: [
           IconButton(
             onPressed: () {
+              AutenticateDatosurce().destroySession();
               context.go('/home/0');
             }, 
             icon: const Icon(Icons.exit_to_app_rounded),

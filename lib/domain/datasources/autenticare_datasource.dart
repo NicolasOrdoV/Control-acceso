@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:control_acceso_emlaze/domain/models/autenticate.dart';
 import 'package:dio/dio.dart';
 import 'package:isar/isar.dart';
@@ -10,17 +9,13 @@ class AutenticateDatosurce {
   late Future<Isar> db;
 
   AutenticateDatosurce({this.code});
-  
+
   Future<Isar> openDB() async {
-    
     final dir = await getApplicationDocumentsDirectory();
 
-    if(Isar.instanceNames.isEmpty) {
-      return await Isar.open(
-        [AutenticateSchema], 
-        inspector: true,
-        directory: dir.path
-      );
+    if (Isar.instanceNames.isEmpty) {
+      return await Isar.open([AutenticateSchema],
+          inspector: true, directory: dir.path);
     }
     return Future.value(Isar.getInstance());
   }
@@ -28,27 +23,46 @@ class AutenticateDatosurce {
   Future autenticate() async {
     db = openDB();
     final dio = Dio(BaseOptions(
-      baseUrl: 'https://www.emlaze.net/includes/api/slimAPI/public',
-      headers: {
-        'Authorization': code
+        baseUrl: 'https://www.emlaze.net/includes/api/slimAPI/public',
+        headers: {'Authorization': code}));
+    final response = await dio.get(
+      '/testtokenQR',
+    );
+
+    if (response.data != null && response.data != "Wrong number of segments") {
+      // print("Aqui" + response.data);
+      if (response.data['status'] == true) {
+        final isar = await db;
+        final dataRes = Autenticate(
+            status: response.data['status'],
+            message: response.data['message'],
+            data: response.data['data']);
+
+        final data = await isar.autenticates.filter().dataIsNotEmpty().findFirst();
+
+        if (data == null) {
+          isar.writeTxnSync(() => isar.autenticates.putSync(dataRes));
+        }
+        return '/access-screen';
+      } else {
+        return response.data['message'];
       }
-    ));
-    final response = await dio.get('/testtokenQR',);
-    if(response.data['status'] == true) {
-      final isar = await db;
-      final dataRes = Autenticate(
-        status: response.data['status'], 
-        message: response.data['message'], 
-        data: response.data['data']
-      );
-      isar.writeTxnSync(() => isar.autenticates.putSync(dataRes));
-      return '/access-screen';
     } else {
-      
+      return "Error de autenticación favor escaneé un QR actualizado";
     }
   }
 
+  Future<void> destroySession() async {
+    db = openDB();
+    final isar = await db;
+    final data = await isar.autenticates.filter().dataIsNotEmpty().findFirst();
 
+    if (data != null) {
+      isar.writeTxnSync(() => isar.autenticates.deleteSync(data.isarId!));
+    }
+  }
+}
 
+Future<void> loadAccess() async {
   
 }
