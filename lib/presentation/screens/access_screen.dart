@@ -21,6 +21,7 @@ class _AccessScreenState extends State<AccessScreen> {
   @override
   void initState() {
     super.initState();
+    AutenticateDatosurce().loadAccess();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showDialog(
         context: context,
