@@ -6,9 +6,8 @@ class Autenticate {
 
   Id? isarId;
 
-  final bool status;
-  final String message;
   final String data;
+  final String? token;
 
-  Autenticate({required this.status, required this.message, required this.data});
+  Autenticate({this.token, required this.data});
 }

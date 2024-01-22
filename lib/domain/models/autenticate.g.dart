@@ -22,15 +22,10 @@ const AutenticateSchema = CollectionSchema(
       name: r'data',
       type: IsarType.string,
     ),
-    r'message': PropertySchema(
+    r'token': PropertySchema(
       id: 1,
-      name: r'message',
+      name: r'token',
       type: IsarType.string,
-    ),
-    r'status': PropertySchema(
-      id: 2,
-      name: r'status',
-      type: IsarType.bool,
     )
   },
   estimateSize: _autenticateEstimateSize,
@@ -54,7 +49,12 @@ int _autenticateEstimateSize(
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.data.length * 3;
-  bytesCount += 3 + object.message.length * 3;
+  {
+    final value = object.token;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -65,8 +65,7 @@ void _autenticateSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.data);
-  writer.writeString(offsets[1], object.message);
-  writer.writeBool(offsets[2], object.status);
+  writer.writeString(offsets[1], object.token);
 }
 
 Autenticate _autenticateDeserialize(
@@ -77,8 +76,7 @@ Autenticate _autenticateDeserialize(
 ) {
   final object = Autenticate(
     data: reader.readString(offsets[0]),
-    message: reader.readString(offsets[1]),
-    status: reader.readBool(offsets[2]),
+    token: reader.readStringOrNull(offsets[1]),
   );
   object.isarId = id;
   return object;
@@ -94,9 +92,7 @@ P _autenticateDeserializeProp<P>(
     case 0:
       return (reader.readString(offset)) as P;
     case 1:
-      return (reader.readString(offset)) as P;
-    case 2:
-      return (reader.readBool(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -400,13 +396,30 @@ extension AutenticateQueryFilter
     });
   }
 
-  QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition> messageEqualTo(
-    String value, {
+  QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition> tokenIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'token',
+      ));
+    });
+  }
+
+  QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition>
+      tokenIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'token',
+      ));
+    });
+  }
+
+  QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition> tokenEqualTo(
+    String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'message',
+        property: r'token',
         value: value,
         caseSensitive: caseSensitive,
       ));
@@ -414,46 +427,46 @@ extension AutenticateQueryFilter
   }
 
   QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition>
-      messageGreaterThan(
-    String value, {
+      tokenGreaterThan(
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'message',
+        property: r'token',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition> messageLessThan(
-    String value, {
+  QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition> tokenLessThan(
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'message',
+        property: r'token',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition> messageBetween(
-    String lower,
-    String upper, {
+  QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition> tokenBetween(
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'message',
+        property: r'token',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -463,83 +476,71 @@ extension AutenticateQueryFilter
     });
   }
 
-  QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition>
-      messageStartsWith(
+  QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition> tokenStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'message',
+        property: r'token',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition> messageEndsWith(
+  QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition> tokenEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'message',
+        property: r'token',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition> messageContains(
+  QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition> tokenContains(
       String value,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
-        property: r'message',
+        property: r'token',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition> messageMatches(
+  QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition> tokenMatches(
       String pattern,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
-        property: r'message',
+        property: r'token',
         wildcard: pattern,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition>
-      messageIsEmpty() {
+  QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition> tokenIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'message',
+        property: r'token',
         value: '',
       ));
     });
   }
 
   QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition>
-      messageIsNotEmpty() {
+      tokenIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'message',
+        property: r'token',
         value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Autenticate, Autenticate, QAfterFilterCondition> statusEqualTo(
-      bool value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'status',
-        value: value,
       ));
     });
   }
@@ -565,27 +566,15 @@ extension AutenticateQuerySortBy
     });
   }
 
-  QueryBuilder<Autenticate, Autenticate, QAfterSortBy> sortByMessage() {
+  QueryBuilder<Autenticate, Autenticate, QAfterSortBy> sortByToken() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'message', Sort.asc);
+      return query.addSortBy(r'token', Sort.asc);
     });
   }
 
-  QueryBuilder<Autenticate, Autenticate, QAfterSortBy> sortByMessageDesc() {
+  QueryBuilder<Autenticate, Autenticate, QAfterSortBy> sortByTokenDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'message', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Autenticate, Autenticate, QAfterSortBy> sortByStatus() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'status', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Autenticate, Autenticate, QAfterSortBy> sortByStatusDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'status', Sort.desc);
+      return query.addSortBy(r'token', Sort.desc);
     });
   }
 }
@@ -616,27 +605,15 @@ extension AutenticateQuerySortThenBy
     });
   }
 
-  QueryBuilder<Autenticate, Autenticate, QAfterSortBy> thenByMessage() {
+  QueryBuilder<Autenticate, Autenticate, QAfterSortBy> thenByToken() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'message', Sort.asc);
+      return query.addSortBy(r'token', Sort.asc);
     });
   }
 
-  QueryBuilder<Autenticate, Autenticate, QAfterSortBy> thenByMessageDesc() {
+  QueryBuilder<Autenticate, Autenticate, QAfterSortBy> thenByTokenDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'message', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Autenticate, Autenticate, QAfterSortBy> thenByStatus() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'status', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Autenticate, Autenticate, QAfterSortBy> thenByStatusDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'status', Sort.desc);
+      return query.addSortBy(r'token', Sort.desc);
     });
   }
 }
@@ -650,16 +627,10 @@ extension AutenticateQueryWhereDistinct
     });
   }
 
-  QueryBuilder<Autenticate, Autenticate, QDistinct> distinctByMessage(
+  QueryBuilder<Autenticate, Autenticate, QDistinct> distinctByToken(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'message', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<Autenticate, Autenticate, QDistinct> distinctByStatus() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'status');
+      return query.addDistinctBy(r'token', caseSensitive: caseSensitive);
     });
   }
 }
@@ -678,15 +649,9 @@ extension AutenticateQueryProperty
     });
   }
 
-  QueryBuilder<Autenticate, String, QQueryOperations> messageProperty() {
+  QueryBuilder<Autenticate, String?, QQueryOperations> tokenProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'message');
-    });
-  }
-
-  QueryBuilder<Autenticate, bool, QQueryOperations> statusProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'status');
+      return query.addPropertyName(r'token');
     });
   }
 }

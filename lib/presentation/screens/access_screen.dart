@@ -1,9 +1,13 @@
 import 'dart:async';
 
 import 'package:control_acceso_emlaze/domain/datasources/autenticare_datasource.dart';
+import 'package:control_acceso_emlaze/presentation/screens/scanner_screen.dart';
+import 'package:control_acceso_emlaze/presentation/shared/footer_view.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qr_code_dart_scan/qr_code_dart_scan.dart';
 
 class AccessScreen extends StatefulWidget {
 
@@ -60,6 +64,16 @@ class _AccessScreenState extends State<AccessScreen> {
     super.dispose();
   }
 
+  Future scanCode(int value) async {
+    final decoder = QRCodeDartScanDecoder(
+      formats: [
+        BarcodeFormat.PDF_417
+      ]
+    );
+    print(decoder);
+    
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,7 +122,12 @@ class _AccessScreenState extends State<AccessScreen> {
                       const Text('Indique el tipo de registro', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),),
                       const SizedBox(height: 8,),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          int value = 1;
+                          // scanCode(value);
+                          BarcodeScan;
+                          
+                        },
                         style: TextButton.styleFrom(
                           backgroundColor: const Color.fromARGB(255, 51, 122, 183),
                           padding: const EdgeInsets.only(right: 110, left: 110)
@@ -140,34 +159,7 @@ class _AccessScreenState extends State<AccessScreen> {
                   ),
                 ),
                 const SizedBox(height: 20,),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 28),
-                  child:  Text('Software Emlaze ERP. Todos los derechos reservados, Prohibida su reproducción total o parcial de los contenidos y base de datos. Al ingresar al sistema estara aprobando Terminos y condiciones y Politica de Proteccion y Tratamiento de Datos Personales de www.emlaze.com', style: TextStyle(fontSize: 15,), textAlign: TextAlign.justify),
-                ),
-                const SizedBox(height: 10,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: () {}, 
-                      icon: const Icon(Icons.facebook_rounded), 
-                      style: const ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        iconColor: MaterialStatePropertyAll(Color.fromARGB(255, 51, 122, 183)),
-                      ),
-                    ),
-                    const SizedBox(width: 10,),
-                    IconButton(
-                      onPressed: () {}, 
-                      icon: const FaIcon(FontAwesomeIcons.twitter), 
-                      style: const ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        iconColor: MaterialStatePropertyAll(Color.fromARGB(255, 51, 122, 183)),
-                      ),
-                    )
-                  ],
-                )
+                const FooterView(),
             ],
           )
         ),
@@ -175,3 +167,5 @@ class _AccessScreenState extends State<AccessScreen> {
     );
   }
 }
+
+
