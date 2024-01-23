@@ -1,13 +1,11 @@
 import 'dart:async';
 
 import 'package:control_acceso_emlaze/domain/datasources/autenticare_datasource.dart';
-import 'package:control_acceso_emlaze/presentation/screens/scanner_screen.dart';
 import 'package:control_acceso_emlaze/presentation/shared/footer_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:go_router/go_router.dart';
-import 'package:qr_code_dart_scan/qr_code_dart_scan.dart';
 
 class AccessScreen extends StatefulWidget {
 
@@ -65,12 +63,19 @@ class _AccessScreenState extends State<AccessScreen> {
   }
 
   Future scanCode(int value) async {
-    final decoder = QRCodeDartScanDecoder(
-      formats: [
-        BarcodeFormat.PDF_417
-      ]
-    );
-    print(decoder);
+    String barcodeScanRes;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+      print("Aqui esta la respuesta " + barcodeScanRes);
+      //Future<dynamic> route = AutenticateDatosurce(code: barcodeScanRes).autenticate();
+      //return route;
+    } on PlatformException {
+      barcodeScanRes = 'Failed to get platform version.';
+    }
+
+    if (!mounted) return;
     
   }
 
@@ -78,6 +83,7 @@ class _AccessScreenState extends State<AccessScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Control de acceso EMLAZE ERP'),
         backgroundColor: const Color.fromARGB(255, 51, 122, 183),
         titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
@@ -124,8 +130,7 @@ class _AccessScreenState extends State<AccessScreen> {
                       ElevatedButton(
                         onPressed: () {
                           int value = 1;
-                          // scanCode(value);
-                          BarcodeScan;
+                          scanCode(value);
                           
                         },
                         style: TextButton.styleFrom(
