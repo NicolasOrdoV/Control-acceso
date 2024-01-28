@@ -18,6 +18,18 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    Future<String> isStorage = AutenticateDatosurce().findStorage();
+    isStorage.then((value) {
+      String route = value.toString();
+      if(route.isNotEmpty){
+        context.push(route);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   Future scanQR() async {
