@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.QR);
+          '#ff6666', 'Cancelar', true, ScanMode.QR);
       // print("Aqui esta la respuesta " + barcodeScanRes);
       Future<dynamic> route = AutenticateDatosurce(code: barcodeScanRes).autenticate();
       return route;

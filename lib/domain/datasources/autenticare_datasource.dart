@@ -54,9 +54,9 @@ class AutenticateDatosurce {
   Future<void> destroySession() async {
     db = openDB();
     final isar = await db;
-    final data = await isar.autenticates.filter().dataIsNotEmpty().findFirst();
-    if (data != null) {
-      isar.writeTxn(() => isar.autenticates.deleteAll([1,2,3,4]));
+    final data = await isar.autenticates.filter().dataIsNotEmpty().findAll();
+    if (data.isNotEmpty) {
+      isar.writeTxn(() => isar.autenticates.deleteAll(data.map((e) => e.isarId!).toList()));
     }
   }
 
