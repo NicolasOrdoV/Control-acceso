@@ -21,6 +21,7 @@ class AccessScreen extends StatefulWidget {
 
 class AccessScreenState extends State<AccessScreen> {
   late Timer _timer;
+  bool isConnected = false;
 
   @override
   void initState() {
@@ -74,6 +75,12 @@ class AccessScreenState extends State<AccessScreen> {
         });
       }
     });
+    checkInternetConnection();
+  }
+
+  Future<void> checkInternetConnection() async {
+    isConnected = await InternetConnectionChecker().hasConnection;
+    setState(() {}); // Actualiza el estado para que se refleje en la interfaz gráfica
   }
 
   @override
@@ -122,14 +129,10 @@ class AccessScreenState extends State<AccessScreen> {
           AutenticateDatosurce().registerCode(codeCedula, tipo);
       return data;
     }
-    //print("Aqui ${String.fromCharCodes(bytes)}");
   }
-
-
 
   @override
   Widget build(BuildContext context) {
-    final isConnection = InternetConnectionChecker().hasConnection;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -140,8 +143,16 @@ class AccessScreenState extends State<AccessScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              AutenticateDatosurce().destroySession();
-              context.go('/home/0');
+              if(isConnected){
+                AutenticateDatosurce().destroySession();
+                Future.delayed(const Duration(seconds: 1), (){
+                  context.push('/home/0');
+                });
+              } else {
+                Future.delayed(const Duration(seconds: 1), (){
+                  context.push('/home/0');
+                });
+              }
             },
             icon: const Icon(Icons.exit_to_app_rounded),
             color: Colors.white,
@@ -164,7 +175,7 @@ class AccessScreenState extends State<AccessScreen> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12), color: Colors.white),
               child: Column(
-                children: [
+                children: <Widget>[
                   ClipRRect(
                     child: Image.asset(
                       'assets/images/logo.png',
@@ -182,7 +193,9 @@ class AccessScreenState extends State<AccessScreen> {
                   const SizedBox(
                     height: 8,
                   ),
-                  
+                  (isConnected)
+                    ? const _OptionsView()
+                    : const Text("Sin conexion a internet", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),)
                 ],
               ),
             ),
