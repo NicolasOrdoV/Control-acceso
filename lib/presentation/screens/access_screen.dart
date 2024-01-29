@@ -1,4 +1,5 @@
 import 'package:control_acceso_emlaze/presentation/screens.dart';
+import 'package:location/location.dart';
 
 class AccessScreen extends StatefulWidget {
   static const name = 'access-screen';
@@ -9,7 +10,7 @@ class AccessScreen extends StatefulWidget {
 }
 
 class AccessScreenState extends State<AccessScreen> {
-  late Timer _timer;
+  Timer? _timer;
   bool isConnected = false;
 
   @override
@@ -75,7 +76,6 @@ class AccessScreenState extends State<AccessScreen> {
 
   @override
   void dispose() {
-    _timer.cancel();
     super.dispose();
   }
 
@@ -117,10 +117,20 @@ class AccessScreenState extends State<AccessScreen> {
         }
       }
       final codeCedula = String.fromCharCodes(bytes);
-      print("Cedula ${codeCedula}");
-      Future<dynamic> data =
-          AutenticateDatosurce().registerCode(codeCedula, tipo);
-      return data;
+      //-------------------Obtener localizacion del dispositivo---------//
+      final location = Location();
+      LocationData locationData = await location.getLocation();
+      bool isLocation = await location.serviceEnabled();
+      double latitud = locationData.latitude!;
+      double longitud = locationData.longitude!;
+      //print("longitud: ${longitud} latitud: ${latitud}");
+      if (isLocation == true) {
+        Future<dynamic> data = AutenticateDatosurce()
+            .registerCode(codeCedula, tipo, longitud, latitud);
+        return data;
+      } else {
+        return null;
+      }
     }
   }
 
@@ -152,12 +162,14 @@ class AccessScreenState extends State<AccessScreen> {
           )
         ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage('assets/images/fondo.png'), fit: BoxFit.fill),
-          ),
+      body: Container(
+        height: double.maxFinite,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/images/fondo.png'), fit: BoxFit.fill),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(top: 50.0),
           child: Center(
               child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -181,18 +193,10 @@ class AccessScreenState extends State<AccessScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    const Text(
-                      'Indique el tipo de registro',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
                     (isConnected)
                         ? const _OptionsView()
                         : const Text(
-                            "Sin conexion a internet",
+                            "Sin conexion a internet o localización",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 15),
                           )
@@ -218,6 +222,13 @@ class _OptionsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        const Text(
+          'Indique el tipo de registro',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+        ),
+        const SizedBox(
+          height: 8,
+        ),
         ElevatedButton(
           onPressed: () {
             int tipo = 1;

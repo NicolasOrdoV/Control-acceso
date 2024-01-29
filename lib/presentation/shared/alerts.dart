@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 class AlertView {
-  final Future<dynamic> response;
-  AlertView({required this.response});
+  final Future<dynamic>? response;
+  AlertView({this.response});
   Future<void> viewAlert(BuildContext context) async {
-    response.then((value) {
+    response?.then((value) {
       final stringValues = value.toString();
       Map<String, dynamic> resultMap = json.decode(stringValues);
       final status = resultMap['status'];
@@ -21,11 +21,13 @@ class AlertView {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    status == true
-                        ? const Icon(Icons.check_circle,
-                            color: Colors.greenAccent, size: 80)
-                        : const Icon(Icons.error_outline_rounded,
-                            color: Colors.redAccent, size: 80),
+                    response != null
+                        ? status == true
+                            ? const Icon(Icons.check_circle,
+                                color: Colors.greenAccent, size: 80)
+                            : const Icon(Icons.error_outline_rounded,
+                                color: Colors.redAccent, size: 80)
+                        : const Text("No esta conectado el GPS"),
                     const SizedBox(
                       height: 20,
                     ),

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:control_acceso_emlaze/domain/models/autenticate.dart';
 import 'package:dio/dio.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -132,7 +131,8 @@ class AutenticateDatosurce {
     }
   }
 
-  Future registerCode(String code, int tipo) async {
+  Future registerCode(
+      String code, int tipo, double longitud, double latitud) async {
     db = openDB();
     final isar = await db;
     final String cedula = code.substring(48, 58);
@@ -148,8 +148,8 @@ class AutenticateDatosurce {
         final response = await dio.post('/access_register', data: {
           'tiporegistro': tipo,
           'idpersona': cedula,
-          'latitud': 0.00,
-          'longitud': 0.00
+          'latitud': latitud,
+          'longitud': longitud
         });
         //print("Aqui ${response.data}");
         return response;
