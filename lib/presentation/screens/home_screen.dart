@@ -1,10 +1,4 @@
-import 'package:animate_do/animate_do.dart';
-import 'package:control_acceso_emlaze/domain/datasources/autenticare_datasource.dart';
-import 'package:control_acceso_emlaze/presentation/shared/footer_view.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:go_router/go_router.dart';
+import 'package:control_acceso_emlaze/presentation/screens.dart';
 
 class HomeScreen extends StatefulWidget {
   static const name = "home-screen";
@@ -60,10 +54,10 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Center(
           child: FadeIn(
-            child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
             Container(
               width: 350,
               height: 260,
@@ -97,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Future<dynamic> result = scanQR();
                       result.then((value) {
                         String result = value.toString();
-            
+
                         if (result == '/access-screen') {
                           context.push(result);
                         } else {
@@ -143,7 +137,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       });
                     },
                     style: TextButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 51, 122, 183),
+                        backgroundColor:
+                            const Color.fromARGB(255, 51, 122, 183),
                         padding: const EdgeInsets.symmetric(horizontal: 30)),
                     child: const Text(
                       'Escanear codigo QR',
@@ -157,9 +152,9 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 20,
             ),
             const FooterView(),
-                    ],
-                  ),
-          )),
+          ],
+        ),
+      )),
     ));
   }
 }

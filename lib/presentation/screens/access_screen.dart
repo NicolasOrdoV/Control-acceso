@@ -1,15 +1,4 @@
-import 'dart:async';
-import 'dart:typed_data';
-import 'package:barcode_scanner/barcode_scanning_data.dart';
-import 'package:barcode_scanner/json/common_data.dart';
-import 'package:barcode_scanner/scanbot_barcode_sdk.dart';
-import 'package:barcode_scanner/scanbot_sdk_models.dart';
-import 'package:control_acceso_emlaze/domain/datasources/autenticare_datasource.dart';
-import 'package:control_acceso_emlaze/presentation/shared/alerts.dart';
-import 'package:control_acceso_emlaze/presentation/shared/footer_view.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:control_acceso_emlaze/presentation/screens.dart';
 
 class AccessScreen extends StatefulWidget {
   static const name = 'access-screen';
@@ -80,7 +69,8 @@ class AccessScreenState extends State<AccessScreen> {
 
   Future<void> checkInternetConnection() async {
     isConnected = await InternetConnectionChecker().hasConnection;
-    setState(() {}); // Actualiza el estado para que se refleje en la interfaz gráfica
+    setState(
+        () {}); // Actualiza el estado para que se refleje en la interfaz gráfica
   }
 
   @override
@@ -143,13 +133,13 @@ class AccessScreenState extends State<AccessScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              if(isConnected){
+              if (isConnected) {
                 AutenticateDatosurce().destroySession();
-                Future.delayed(const Duration(seconds: 1), (){
+                Future.delayed(const Duration(seconds: 1), () {
                   context.push('/home/0');
                 });
               } else {
-                Future.delayed(const Duration(seconds: 1), (){
+                Future.delayed(const Duration(seconds: 1), () {
                   context.push('/home/0');
                 });
               }
@@ -194,8 +184,12 @@ class AccessScreenState extends State<AccessScreen> {
                     height: 8,
                   ),
                   (isConnected)
-                    ? const _OptionsView()
-                    : const Text("Sin conexion a internet", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),)
+                      ? const _OptionsView()
+                      : const Text(
+                          "Sin conexion a internet",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                        )
                 ],
               ),
             ),
