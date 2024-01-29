@@ -111,10 +111,13 @@ class AccessScreenState extends State<AccessScreen> {
         for (int uint82 in uint8!) {
           if (uint82 != 0) {
             bytes.add(uint82.toInt());
+          } else {
+            bytes.add(42);
           }
         }
       }
       final codeCedula = String.fromCharCodes(bytes);
+      print("Cedula ${codeCedula}");
       Future<dynamic> data =
           AutenticateDatosurce().registerCode(codeCedula, tipo);
       return data;
@@ -139,8 +142,8 @@ class AccessScreenState extends State<AccessScreen> {
                   context.push('/home/0');
                 });
               } else {
-                Future.delayed(const Duration(seconds: 1), () {
-                  context.push('/home/0');
+                Future.delayed(const Duration(seconds: 2), () {
+                  context.go('/home/0');
                 });
               }
             },
@@ -149,56 +152,60 @@ class AccessScreenState extends State<AccessScreen> {
           )
         ],
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('assets/images/fondo.png'), fit: BoxFit.fill),
-        ),
-        child: Center(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 350,
-              height: 305,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12), color: Colors.white),
+      body: SingleChildScrollView(
+        child: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/images/fondo.png'), fit: BoxFit.fill),
+          ),
+          child: Center(
               child: Column(
-                children: <Widget>[
-                  ClipRRect(
-                    child: Image.asset(
-                      'assets/images/logo.png',
-                      fit: BoxFit.contain,
-                      width: 300,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 350,
+                height: 305,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white),
+                child: Column(
+                  children: <Widget>[
+                    ClipRRect(
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        fit: BoxFit.contain,
+                        width: 300,
+                      ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Text(
-                    'Indique el tipo de registro',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  (isConnected)
-                      ? const _OptionsView()
-                      : const Text(
-                          "Sin conexion a internet",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 15),
-                        )
-                ],
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Text(
+                      'Indique el tipo de registro',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    (isConnected)
+                        ? const _OptionsView()
+                        : const Text(
+                            "Sin conexion a internet",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 15),
+                          )
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            const FooterView()
-          ],
-        )),
+              const SizedBox(
+                height: 20,
+              ),
+              const FooterView()
+            ],
+          )),
+        ),
       ),
     );
   }
@@ -233,7 +240,7 @@ class _OptionsView extends StatelessWidget {
           onPressed: () {
             int tipo = 3;
             Future<dynamic> result = AccessScreenState().scanBarcode(tipo);
-            AlertView(response: result);
+            AlertView(response: result).viewAlert(context);
           },
           style: TextButton.styleFrom(
               backgroundColor: const Color.fromARGB(255, 51, 122, 183),
@@ -251,7 +258,7 @@ class _OptionsView extends StatelessWidget {
           onPressed: () {
             int tipo = 2;
             Future<dynamic> result = AccessScreenState().scanBarcode(tipo);
-            AlertView(response: result);
+            AlertView(response: result).viewAlert(context);
           },
           style: TextButton.styleFrom(
               backgroundColor: const Color.fromARGB(255, 51, 122, 183),

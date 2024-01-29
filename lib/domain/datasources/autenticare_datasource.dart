@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:control_acceso_emlaze/domain/models/autenticate.dart';
 import 'package:dio/dio.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -26,31 +27,39 @@ class AutenticateDatosurce {
   Future autenticate() async {
     db = openDB();
     bool isConnection = await InternetConnectionChecker().hasConnection;
+    String initialS = code!.substring(0, 5);
+    print("inicial: ${initialS}");
 
     if (isConnection == true) {
-      final dio = Dio(BaseOptions(
-          baseUrl: '$url/includes/api/slimAPI/public',
-          headers: {'Authorization': code}));
-      final response = await dio.get(
-        '/testtokenQR',
-      );
+      if (initialS != "https") {
+        final dio = Dio(BaseOptions(
+            baseUrl: '$url/includes/api/slimAPI/public',
+            headers: {'Authorization': code}));
+        final response = await dio.get(
+          '/testtokenQR',
+        );
 
-      if (response.data != null &&
-          response.data != "Wrong number of segments") {
-        if (response.data['status'] == true) {
-          final isar = await db;
-          final dataRes = Autenticate(data: response.data['data']);
+        print("Aqui ${response.data}");
 
-          final data =
-              await isar.autenticates.filter().dataIsNotEmpty().findFirst();
+        if (response.data != null &&
+            response.data != "Wrong number of segments") {
+          if (response.data['status'] == true) {
+            final isar = await db;
+            final dataRes = Autenticate(data: response.data['data']);
 
-          if (data == null) {
-            isar.writeTxnSync(() => isar.autenticates.putSync(dataRes));
-            // isar.close();
+            final data =
+                await isar.autenticates.filter().dataIsNotEmpty().findFirst();
+
+            if (data == null) {
+              isar.writeTxnSync(() => isar.autenticates.putSync(dataRes));
+              // isar.close();
+            }
+            return '/access-screen';
+          } else {
+            return response.data['message'];
           }
-          return '/access-screen';
         } else {
-          return response.data['message'];
+          return "Error de autenticación favor escaneé un QR actualizado";
         }
       } else {
         return "Error de autenticación favor escaneé un QR actualizado";
@@ -126,7 +135,7 @@ class AutenticateDatosurce {
   Future registerCode(String code, int tipo) async {
     db = openDB();
     final isar = await db;
-    final String cedula = code.substring(24, 34);
+    final String cedula = code.substring(48, 58);
     if (int.parse(cedula) > 0 && tipo > 0) {
       final List<Autenticate> dataRes =
           await isar.autenticates.where().findAll();
