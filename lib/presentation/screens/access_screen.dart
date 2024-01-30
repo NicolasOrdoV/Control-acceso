@@ -79,6 +79,7 @@ class AccessScreenState extends State<AccessScreen> {
   }
 
   Future scanBarcode(int tipo) async {
+    Future<dynamic>? data;
     String licenseKey =
         "D7LE+Z2la7jpVq1f314y3fS+n44dXPJmHMm8G+X5rKO/ALmeLBPBdC299+RCGcZepG+WxjQNozKS/WlyrKO/h9/k5EXeNBajVkgrOEeV7dVvbg1YHKJinYZgIOV8ytnB7sNgMT/J+Dl4WsVZXtqYDx1xvZ8p0Lu2noz3fw4S/JNNmEg0GQmpY0N+oB1qTCGaUUzvgIzeIiC88IzUM4XC/Pcb6DQp7KQKyMnYQY1jNf1fF0bwk1fmi90PliJiu6+Zbj08Pt0szJIMjVklG3YUVcEnyU1IvsvQV4FDWDIC5LzBvMxCf5smtZblQ/6gi136RfyBBSgRm4i0tj/331HURw==\nU2NhbmJvdFNESwpjb20uZXhhbXBsZS5jb250cm9sX2FjY2Vzb19lbWxhemUKMTcwNzAwNDc5OQo4Mzg4NjA3CjE5\n";
     final config = ScanbotSdkConfig(
@@ -111,24 +112,25 @@ class AccessScreenState extends State<AccessScreen> {
           if (uint82 != 0) {
             bytes.add(uint82.toInt());
           } else {
-            bytes.add(42);// El caracter 42 representa un (*) en bytes
+            bytes.add(42); // El caracter 42 representa un (*) en bytes
           }
         }
       }
       final codeCedula = String.fromCharCodes(bytes);
       //-------------------Obtener localizacion del dispositivo---------//
       final location = Location();
-      LocationData locationData = await location.getLocation();
       bool isLocation = await location.serviceEnabled();
-      double latitud = locationData.latitude!;
-      double longitud = locationData.longitude!;
+
       //print("longitud: ${longitud} latitud: ${latitud}");
       if (isLocation == true) {
-        Future<dynamic> data = AutenticateDatosurce()
+        LocationData locationData = await location.getLocation();
+        double latitud = locationData.latitude!;
+        double longitud = locationData.longitude!;
+        data = AutenticateDatosurce()
             .registerCode(codeCedula, tipo, longitud, latitud);
         return data;
       } else {
-        return null;
+        return "";
       }
     }
   }
@@ -231,7 +233,11 @@ class _OptionsView extends StatelessWidget {
         ElevatedButton(
           onPressed: () {
             int tipo = 1;
+            const Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+            );
             Future<dynamic> result = AccessScreenState().scanBarcode(tipo);
+            print(result.hashCode);
             AlertView(response: result).viewAlert(context);
           },
           style: TextButton.styleFrom(

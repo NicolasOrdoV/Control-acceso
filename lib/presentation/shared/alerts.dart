@@ -21,7 +21,7 @@ class AlertView {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    response != null
+                    value != null
                         ? status == true
                             ? const Icon(Icons.check_circle,
                                 color: Colors.greenAccent, size: 80)
