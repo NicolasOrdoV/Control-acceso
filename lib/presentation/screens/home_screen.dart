@@ -17,7 +17,9 @@ class _HomeScreenState extends State<HomeScreen> {
     isStorage.then((value) {
       String route = value.toString();
       if (route.isNotEmpty) {
-        context.push(route);
+        Future.delayed(const Duration(milliseconds: 5), () {
+          context.push(route);
+        });
       }
     });
   }

@@ -10,7 +10,6 @@ class AccessScreen extends StatefulWidget {
 }
 
 class AccessScreenState extends State<AccessScreen> {
-  Timer? _timer;
   bool isConnected = false;
 
   @override
@@ -60,7 +59,7 @@ class AccessScreenState extends State<AccessScreen> {
           );
         });
 
-        _timer = Timer(const Duration(seconds: 2), () {
+        Timer(const Duration(seconds: 2), () {
           Navigator.of(context).pop();
         });
       }
@@ -112,7 +111,7 @@ class AccessScreenState extends State<AccessScreen> {
           if (uint82 != 0) {
             bytes.add(uint82.toInt());
           } else {
-            bytes.add(42);
+            bytes.add(42);// El caracter 42 representa un (*) en bytes
           }
         }
       }
@@ -196,7 +195,7 @@ class AccessScreenState extends State<AccessScreen> {
                     (isConnected)
                         ? const _OptionsView()
                         : const Text(
-                            "Sin conexion a internet o localización",
+                            "Sin conexion a internet",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 15),
                           )
