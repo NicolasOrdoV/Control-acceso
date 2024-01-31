@@ -52,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return Scaffold(
         body: FutureBuilder(
       future: fetchData(),
@@ -79,120 +80,124 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         } else {
           return Container(
+            height: double.maxFinite,
             decoration: const BoxDecoration(
               image: DecorationImage(
                   image: AssetImage('assets/images/fondo.png'),
                   fit: BoxFit.fill),
             ),
-            child: Center(
-                child: FadeIn(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 350,
-                    height: 260,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: Colors.white),
-                    child: Column(
-                      children: [
-                        ClipRRect(
-                          child: Image.asset(
-                            'assets/images/logo.png',
-                            fit: BoxFit.contain,
-                            width: 300,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.only(top: 160.0),
+              child: Center(
+                  child: FadeIn(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 350,
+                      height: 260,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white),
+                      child: Column(
+                        children: [
+                          ClipRRect(
+                            child: Image.asset(
+                              'assets/images/logo.png',
+                              fit: BoxFit.contain,
+                              width: 300,
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        const Text(
-                          'Control de acceso',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
-                        ),
-                        const Text(
-                          'EMLAZE ERP',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 22),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Future<dynamic> result = scanQR();
-                            result.then((value) {
-                              String result = value.toString();
-
-                              if (result == '/access-screen') {
-                                context.push(result);
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      content: SizedBox(
-                                        width: 30,
-                                        height: 210,
-                                        child: Column(
-                                          children: [
-                                            const Icon(
-                                                Icons.warning_amber_rounded,
-                                                color: Colors.orange,
-                                                size: 80),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            const Text(
-                                              'Advertencia!',
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              result,
-                                              style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                          ],
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          const Text(
+                            'Control de acceso',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                          const Text(
+                            'EMLAZE ERP',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 22),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              Future<dynamic> result = scanQR();
+                              result.then((value) {
+                                String result = value.toString();
+              
+                                if (result == '/access-screen') {
+                                  context.push(result);
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        content: SizedBox(
+                                          width: 30,
+                                          height: 210,
+                                          child: Column(
+                                            children: [
+                                              const Icon(
+                                                  Icons.warning_amber_rounded,
+                                                  color: Colors.orange,
+                                                  size: 80),
+                                              const SizedBox(
+                                                height: 20,
+                                              ),
+                                              const Text(
+                                                'Advertencia!',
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold),
+                                              ),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(
+                                                result,
+                                                style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold),
+                                              ),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              }
-                            });
-                          },
-                          style: TextButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 51, 122, 183),
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 30)),
-                          child: const Text(
-                            'Escanear codigo QR',
-                            style: TextStyle(color: Colors.white),
+                                      );
+                                    },
+                                  );
+                                }
+                              });
+                            },
+                            style: TextButton.styleFrom(
+                                backgroundColor:
+                                    const Color.fromARGB(255, 51, 122, 183),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 30)),
+                            child: const Text(
+                              'Escanear codigo QR',
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const FooterView(),
-                ],
-              ),
-            )),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const FooterView(),
+                  ],
+                ),
+              )),
+            ),
           );
         }
       },

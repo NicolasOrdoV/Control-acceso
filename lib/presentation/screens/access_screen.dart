@@ -137,6 +137,7 @@ class AccessScreenState extends State<AccessScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
