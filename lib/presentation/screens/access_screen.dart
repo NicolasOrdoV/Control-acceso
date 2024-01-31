@@ -81,7 +81,7 @@ class AccessScreenState extends State<AccessScreen> {
   Future scanBarcode(int tipo) async {
     Future<dynamic>? data;
     String licenseKey =
-        "D7LE+Z2la7jpVq1f314y3fS+n44dXPJmHMm8G+X5rKO/ALmeLBPBdC299+RCGcZepG+WxjQNozKS/WlyrKO/h9/k5EXeNBajVkgrOEeV7dVvbg1YHKJinYZgIOV8ytnB7sNgMT/J+Dl4WsVZXtqYDx1xvZ8p0Lu2noz3fw4S/JNNmEg0GQmpY0N+oB1qTCGaUUzvgIzeIiC88IzUM4XC/Pcb6DQp7KQKyMnYQY1jNf1fF0bwk1fmi90PliJiu6+Zbj08Pt0szJIMjVklG3YUVcEnyU1IvsvQV4FDWDIC5LzBvMxCf5smtZblQ/6gi136RfyBBSgRm4i0tj/331HURw==\nU2NhbmJvdFNESwpjb20uZXhhbXBsZS5jb250cm9sX2FjY2Vzb19lbWxhemUKMTcwNzAwNDc5OQo4Mzg4NjA3CjE5\n";
+        "VRuGAPPYrLUMvCv+BL/XeCzuKfOIv5Fwhj9xgTwn5LfXzbkUmhuSLbBF4wXVgXri0cCLDgk9kqV4FkSPe2jGtjrXSh4/AFRvGqI8zekcHtKDKdONwQncXmsynnN/GwZow8dOaZDWMWoginEI2e6Kk+z8Dm41tElcJ7h/TlM62aRvYhp7mOlA4Kc9k4FPL+8WjQWoqy+kLYU0rwiVZ7XNmZBvZADIbWajBaNbwJRK/NJsXJBZhPgvxPOwdE3g2E2DprUSF0j2DdaXPPZg4VC7QTGFmvLGdZXZNkTE8jJezg+gUJubod7f4f85rzH42NBUQ3SvvGePGMz+V6WtUhkYGw==\nU2NhbmJvdFNESwpjb20uZXhhbXBsZS5jb250cm9sX2FjY2Vzb19lbWxhemUKMTcwOTI1MTE5OQo4Mzg4NjA3CjE5\n";
     final config = ScanbotSdkConfig(
         licenseKey: licenseKey,
         loggingEnabled: false,
@@ -122,17 +122,25 @@ class AccessScreenState extends State<AccessScreen> {
       bool isLocation = await location.serviceEnabled();
 
       //print("longitud: ${longitud} latitud: ${latitud}");
-      if (isLocation == true) {
-        LocationData locationData = await location.getLocation();
-        double latitud = locationData.latitude!;
-        double longitud = locationData.longitude!;
-        data = AutenticateDatosurce()
-            .registerCode(codeCedula, tipo, longitud, latitud);
-        return data;
-      } else {
-        return data;
+      if (codeCedula.isNotEmpty) {
+        if (isLocation == true) {
+          LocationData locationData = await location.getLocation();
+          double latitud = locationData.latitude!;
+          double longitud = locationData.longitude!;
+          data = AutenticateDatosurce()
+              .registerCode(codeCedula, tipo, longitud, latitud);
+          return data;
+        } else {
+          return data;
+        }
       }
     }
+  }
+
+  Future<void> _refresh() async {
+    await Future.delayed(const Duration(seconds: 2)); // Simulación de carga
+    AutenticateDatosurce().loadAccess();
+    setState(() {});
   }
 
   @override
@@ -164,53 +172,56 @@ class AccessScreenState extends State<AccessScreen> {
           )
         ],
       ),
-      body: Container(
-        height: double.maxFinite,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('assets/images/fondo.png'), fit: BoxFit.fill),
-        ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(top: 50.0),
-          child: Center(
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: 350,
-                height: 305,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors.white),
+      body: RefreshIndicator(
+        onRefresh: _refresh,
+        child: Container(
+          height: double.maxFinite,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/images/fondo.png'), fit: BoxFit.fill),
+          ),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.only(top: 50.0),
+            child: Center(
                 child: Column(
-                  children: <Widget>[
-                    ClipRRect(
-                      child: Image.asset(
-                        'assets/images/logo.png',
-                        fit: BoxFit.contain,
-                        width: 300,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: 350,
+                  height: 305,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.white),
+                  child: Column(
+                    children: <Widget>[
+                      ClipRRect(
+                        child: Image.asset(
+                          'assets/images/logo.png',
+                          fit: BoxFit.contain,
+                          width: 300,
+                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    (isConnected)
-                        ? const _OptionsView()
-                        : const Text(
-                            "Sin conexion a internet",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15),
-                          )
-                  ],
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      (isConnected)
+                          ? const _OptionsView()
+                          : const Text(
+                              "Sin conexion a internet",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15),
+                            )
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              const FooterView()
-            ],
-          )),
+                const SizedBox(
+                  height: 20,
+                ),
+                const FooterView()
+              ],
+            )),
+          ),
         ),
       ),
     );

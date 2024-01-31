@@ -18,7 +18,7 @@ class AlertView {
         message = resultMap['message'];
       } else {
         status = false;
-        message = "La localizacion no esta conectada";
+        message = "La ubicación no esta conectada";
       }
 
       return showDialog<void>(
