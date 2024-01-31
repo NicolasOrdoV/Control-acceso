@@ -7,10 +7,20 @@ class AlertView {
   AlertView({this.response});
   Future<void> viewAlert(BuildContext context) async {
     response?.then((value) {
-      final stringValues = value.toString();
-      Map<String, dynamic> resultMap = json.decode(stringValues);
-      final status = resultMap['status'];
-      final message = resultMap['message'];
+      final String stringValues;
+      Map<String, dynamic> resultMap;
+      final bool status;
+      final String message;
+      if (value != null) {
+        stringValues = value.toString();
+        resultMap = json.decode(stringValues);
+        status = resultMap['status'];
+        message = resultMap['message'];
+      } else {
+        status = false;
+        message = "La localizacion no esta conectada";
+      }
+
       return showDialog<void>(
         context: context,
         builder: (context) {
@@ -21,13 +31,11 @@ class AlertView {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    value != null
-                        ? status == true
-                            ? const Icon(Icons.check_circle,
-                                color: Colors.greenAccent, size: 80)
-                            : const Icon(Icons.error_outline_rounded,
-                                color: Colors.redAccent, size: 80)
-                        : const Text("No esta conectado el GPS"),
+                    status == true
+                        ? const Icon(Icons.check_circle,
+                            color: Colors.greenAccent, size: 80)
+                        : const Icon(Icons.error_outline_rounded,
+                            color: Colors.redAccent, size: 80),
                     const SizedBox(
                       height: 20,
                     ),

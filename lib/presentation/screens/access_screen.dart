@@ -130,7 +130,7 @@ class AccessScreenState extends State<AccessScreen> {
             .registerCode(codeCedula, tipo, longitud, latitud);
         return data;
       } else {
-        return "";
+        return data;
       }
     }
   }
@@ -237,7 +237,6 @@ class _OptionsView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
             );
             Future<dynamic> result = AccessScreenState().scanBarcode(tipo);
-            print(result.hashCode);
             AlertView(response: result).viewAlert(context);
           },
           style: TextButton.styleFrom(
