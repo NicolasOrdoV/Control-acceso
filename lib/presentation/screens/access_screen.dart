@@ -1,4 +1,5 @@
 import 'package:control_acceso_emlaze/presentation/screens.dart';
+// import 'package:flutter_mobile_vision_2/flutter_mobile_vision_2.dart';
 import 'package:location/location.dart';
 
 class AccessScreen extends StatefulWidget {
@@ -11,10 +12,21 @@ class AccessScreen extends StatefulWidget {
 
 class AccessScreenState extends State<AccessScreen> {
   bool isConnected = false;
+  // Size? _previewBarcode;
+  // int? _cameraBarcode = FlutterMobileVision.CAMERA_BACK;
+  // Size? _previewOcr;
+  // int? _cameraOcr = FlutterMobileVision.CAMERA_BACK;
 
   @override
   void initState() {
     super.initState();
+    // FlutterMobileVision.start().then((previewSizes) => setState(() {
+    //       if (previewSizes[_cameraBarcode] == null) {
+    //         return;
+    //       }
+    //       _previewBarcode = previewSizes[_cameraBarcode]!.first;
+    //       _previewOcr = previewSizes[_cameraOcr]!.first;
+    //     }));
     Future<bool> isConnection = InternetConnectionChecker().hasConnection;
     isConnection.then((value) {
       if (value == true) {
@@ -64,6 +76,7 @@ class AccessScreenState extends State<AccessScreen> {
         });
       }
     });
+
     checkInternetConnection();
   }
 
@@ -79,6 +92,33 @@ class AccessScreenState extends State<AccessScreen> {
   }
 
   Future scanBarcode(int tipo) async {
+    // List<Barcode> barcodes = [];
+    // Size _scanpreviewOcr = _previewOcr ?? FlutterMobileVision.PREVIEW;
+    // try {
+    //   barcodes = await FlutterMobileVision.scan(
+    //       flash: true,
+    //       autoFocus: true,
+    //       formats: Barcode.PDF417,
+    //       multiple: false,
+    //       waitTap: true,
+    //       showText: false,
+    //       camera: _cameraBarcode ?? FlutterMobileVision.CAMERA_BACK,
+    //       fps: 15.0,
+    //       scanArea:
+    //           Size(_scanpreviewOcr.width + 1300, _scanpreviewOcr.height + 100),
+    //       preview: _previewBarcode ?? FlutterMobileVision.PREVIEW,
+    //       // preview: const Size(2000, 600),
+    //       forceCloseCameraOnTap: false);
+    //   //print("Aqui: ${barcodes}");
+    // } on Exception {
+    //   barcodes.add(Barcode('Failed to get barcode.'));
+    // }
+
+    // if (!mounted) return;
+    // setState(() {
+    //   SystemChrome.setPreferredOrientations(
+    //       [DeviceOrientation.landscapeLeft, DeviceOrientation.portraitUp]);
+    // });
     Future<dynamic>? data;
     String licenseKey =
         "VRuGAPPYrLUMvCv+BL/XeCzuKfOIv5Fwhj9xgTwn5LfXzbkUmhuSLbBF4wXVgXri0cCLDgk9kqV4FkSPe2jGtjrXSh4/AFRvGqI8zekcHtKDKdONwQncXmsynnN/GwZow8dOaZDWMWoginEI2e6Kk+z8Dm41tElcJ7h/TlM62aRvYhp7mOlA4Kc9k4FPL+8WjQWoqy+kLYU0rwiVZ7XNmZBvZADIbWajBaNbwJRK/NJsXJBZhPgvxPOwdE3g2E2DprUSF0j2DdaXPPZg4VC7QTGFmvLGdZXZNkTE8jJezg+gUJubod7f4f85rzH42NBUQ3SvvGePGMz+V6WtUhkYGw==\nU2NhbmJvdFNESwpjb20uZXhhbXBsZS5jb250cm9sX2FjY2Vzb19lbWxhemUKMTcwOTI1MTE5OQo4Mzg4NjA3CjE5\n";

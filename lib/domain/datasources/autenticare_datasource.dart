@@ -27,7 +27,6 @@ class AutenticateDatosurce {
     db = openDB();
     bool isConnection = await InternetConnectionChecker().hasConnection;
     String initialS = code!.substring(0, 5);
-    print("inicial: ${initialS}");
 
     if (isConnection == true) {
       if (initialS != "https") {
@@ -37,8 +36,6 @@ class AutenticateDatosurce {
         final response = await dio.get(
           '/testtokenQR',
         );
-
-        print("Aqui ${response.data}");
 
         if (response.data != null &&
             response.data != "Wrong number of segments") {
