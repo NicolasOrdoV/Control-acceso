@@ -1,10 +1,8 @@
 export 'dart:async';
 export 'dart:typed_data';
 export 'package:animate_do/animate_do.dart';
-// export 'package:barcode_scanner/barcode_scanning_data.dart';
-// export 'package:barcode_scanner/json/common_data.dart';
-// export 'package:barcode_scanner/scanbot_barcode_sdk.dart';
-// export 'package:barcode_scanner/scanbot_sdk_models.dart';
+export 'package:flutter_hms_scan_kit/flutter_hms_scan_kit.dart';
+export 'package:flutter_hms_scan_kit/scan_result.dart';
 export 'package:control_acceso_emlaze/domain/datasources/autenticare_datasource.dart';
 export 'package:control_acceso_emlaze/presentation/shared/alerts.dart';
 export 'package:control_acceso_emlaze/presentation/shared/footer_view.dart';
