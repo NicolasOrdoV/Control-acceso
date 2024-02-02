@@ -18,7 +18,7 @@ class AlertView {
         message = resultMap['message'];
       } else {
         status = false;
-        message = "La localizacion no esta conectada";
+        message = "Por favor active la ubicación del celular";
       }
 
       return showDialog<void>(
