@@ -1,4 +1,6 @@
 import 'package:control_acceso_emlaze/presentation/screens.dart';
+import 'package:flutter_hms_scan_kit/flutter_hms_scan_kit.dart';
+import 'package:flutter_hms_scan_kit/scan_result.dart';
 import 'package:location/location.dart';
 
 class AccessScreen extends StatefulWidget {
@@ -79,45 +81,22 @@ class AccessScreenState extends State<AccessScreen> {
   }
 
   Future scanBarcode(int tipo) async {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
     Future<dynamic>? data;
-    String licenseKey =
-        "D7LE+Z2la7jpVq1f314y3fS+n44dXPJmHMm8G+X5rKO/ALmeLBPBdC299+RCGcZepG+WxjQNozKS/WlyrKO/h9/k5EXeNBajVkgrOEeV7dVvbg1YHKJinYZgIOV8ytnB7sNgMT/J+Dl4WsVZXtqYDx1xvZ8p0Lu2noz3fw4S/JNNmEg0GQmpY0N+oB1qTCGaUUzvgIzeIiC88IzUM4XC/Pcb6DQp7KQKyMnYQY1jNf1fF0bwk1fmi90PliJiu6+Zbj08Pt0szJIMjVklG3YUVcEnyU1IvsvQV4FDWDIC5LzBvMxCf5smtZblQ/6gi136RfyBBSgRm4i0tj/331HURw==\nU2NhbmJvdFNESwpjb20uZXhhbXBsZS5jb250cm9sX2FjY2Vzb19lbWxhemUKMTcwNzAwNDc5OQo4Mzg4NjA3CjE5\n";
-    final config = ScanbotSdkConfig(
-        licenseKey: licenseKey,
-        loggingEnabled: false,
-        useCameraX: true,
-        allowGpuAcceleration: true);
-    ScanbotBarcodeSdk.initScanbotSdk(config);
-
-    //iniciar escaneo//
-    final config2 = BarcodeScannerConfiguration(
-      barcodeFormats: BarcodeFormat.values,
-      topBarBackgroundColor: const Color.fromARGB(255, 51, 122, 183),
-      finderTextHint:
-          "Por favor, posicione el codigo de la cedula para poderla escanear.",
-      cancelButtonTitle: "Cancelar",
-      flashEnabled: false,
-      orientationLockMode: OrientationLockMode.LANDSCAPE,
-      engineMode: EngineMode.LEGACY,
-      successBeepEnabled: true,
-      finderAspectRatio: const FinderAspectRatio(width: 500, height: 100),
-    );
-    final result = await ScanbotBarcodeSdk.startBarcodeScanner(config2);
-    if (result.barcodeItems.isNotEmpty) {
-      final List<Uint8List?> lista =
-          result.barcodeItems.map((e) => e.rawBytes).toList();
+    ScanResult? scanResult;
+    scanResult = await FlutterHmsScanKit.startScan(
+        isToastDebug: false, isContinuousClick: false);
+    List<int>? uint8 = scanResult!.valueByte;
+    if (uint8!.isNotEmpty) {
       List<int> bytes = [];
-      for (var uint8 in lista) {
-        for (int uint82 in uint8!) {
-          if (uint82 != 0) {
-            bytes.add(uint82.toInt());
-          } else {
-            bytes.add(42); // El caracter 42 representa un (*) en bytes
-          }
+      for (int uint82 in uint8) {
+        if (uint82 != 0) {
+          bytes.add(uint82.toInt());
+        } else {
+          bytes.add(42); // El caracter 42 representa un (*) en bytes
         }
       }
       final codeCedula = String.fromCharCodes(bytes);
-      //-------------------Obtener localizacion del dispositivo---------//
       final location = Location();
       bool isLocation = await location.serviceEnabled();
 
@@ -128,11 +107,68 @@ class AccessScreenState extends State<AccessScreen> {
         double longitud = locationData.longitude!;
         data = AutenticateDatosurce()
             .registerCode(codeCedula, tipo, longitud, latitud);
+        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
         return data;
       } else {
+        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
         return data;
       }
     }
+
+    // Future<dynamic>? data;
+    // String licenseKey =
+    //     "D7LE+Z2la7jpVq1f314y3fS+n44dXPJmHMm8G+X5rKO/ALmeLBPBdC299+RCGcZepG+WxjQNozKS/WlyrKO/h9/k5EXeNBajVkgrOEeV7dVvbg1YHKJinYZgIOV8ytnB7sNgMT/J+Dl4WsVZXtqYDx1xvZ8p0Lu2noz3fw4S/JNNmEg0GQmpY0N+oB1qTCGaUUzvgIzeIiC88IzUM4XC/Pcb6DQp7KQKyMnYQY1jNf1fF0bwk1fmi90PliJiu6+Zbj08Pt0szJIMjVklG3YUVcEnyU1IvsvQV4FDWDIC5LzBvMxCf5smtZblQ/6gi136RfyBBSgRm4i0tj/331HURw==\nU2NhbmJvdFNESwpjb20uZXhhbXBsZS5jb250cm9sX2FjY2Vzb19lbWxhemUKMTcwNzAwNDc5OQo4Mzg4NjA3CjE5\n";
+    // final config = ScanbotSdkConfig(
+    //     licenseKey: licenseKey,
+    //     loggingEnabled: false,
+    //     useCameraX: true,
+    //     allowGpuAcceleration: true);
+    // ScanbotBarcodeSdk.initScanbotSdk(config);
+
+    // //iniciar escaneo//
+    // final config2 = BarcodeScannerConfiguration(
+    //   barcodeFormats: BarcodeFormat.values,
+    //   topBarBackgroundColor: const Color.fromARGB(255, 51, 122, 183),
+    //   finderTextHint:
+    //       "Por favor, posicione el codigo de la cedula para poderla escanear.",
+    //   cancelButtonTitle: "Cancelar",
+    //   flashEnabled: false,
+    //   orientationLockMode: OrientationLockMode.LANDSCAPE,
+    //   engineMode: EngineMode.LEGACY,
+    //   successBeepEnabled: true,
+    //   finderAspectRatio: const FinderAspectRatio(width: 500, height: 100),
+    // );
+    // final result = await ScanbotBarcodeSdk.startBarcodeScanner(config2);
+    // if (result.barcodeItems.isNotEmpty) {
+    //   final List<Uint8List?> lista =
+    //       result.barcodeItems.map((e) => e.rawBytes).toList();
+    //   List<int> bytes = [];
+    //   for (var uint8 in lista) {
+    //     for (int uint82 in uint8!) {
+    //       if (uint82 != 0) {
+    //         bytes.add(uint82.toInt());
+    //       } else {
+    //         bytes.add(42); // El caracter 42 representa un (*) en bytes
+    //       }
+    //     }
+    //   }
+    //   final codeCedula = String.fromCharCodes(bytes);
+    //   //-------------------Obtener localizacion del dispositivo---------//
+    //   final location = Location();
+    //   bool isLocation = await location.serviceEnabled();
+
+    //   //print("longitud: ${longitud} latitud: ${latitud}");
+    //   if (isLocation == true) {
+    //     LocationData locationData = await location.getLocation();
+    //     double latitud = locationData.latitude!;
+    //     double longitud = locationData.longitude!;
+    //     data = AutenticateDatosurce()
+    //         .registerCode(codeCedula, tipo, longitud, latitud);
+    //     return data;
+    //   } else {
+    //     return data;
+    //   }
+    // }
   }
 
   @override
