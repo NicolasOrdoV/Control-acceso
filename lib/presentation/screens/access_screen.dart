@@ -84,9 +84,10 @@ class AccessScreenState extends State<AccessScreen> {
     ScanResult? scanResult;
     scanResult = await FlutterHmsScanKit.startScan(
         isToastDebug: false, isContinuousClick: false);
-    List<int>? uint8 = scanResult!.valueByte;
+    final valBytes = scanResult?.value.toString().codeUnits;
+    List<int>? uint8 = valBytes;
+    List<int> bytes = [];
     if (uint8!.isNotEmpty) {
-      List<int> bytes = [];
       for (int uint82 in uint8) {
         if (uint82 != 0) {
           bytes.add(uint82.toInt());
@@ -95,6 +96,7 @@ class AccessScreenState extends State<AccessScreen> {
         }
       }
       final codeCedula = String.fromCharCodes(bytes);
+      print(codeCedula);
       //generar localizacion//
       final location = Location();
       bool isLocation = await location.serviceEnabled();
